@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Mon profil immobilier — The Inu House</title>
+<meta name="description" content="Découvrez votre profil immobilier grâce à un questionnaire d'introspection. Avant de chercher un bien, apprenez à vous connaître.">
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ETZJV235TP"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ETZJV235TP');
+</script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F5F3F0;
+  --white: #ffffff;
+  --text: #333333;
+  --text-light: #999999;
+  --border: #e6e6e6;
+  --accent: #333333;
+  --accent-hover: #555555;
+  --alert-bg: #FFF8F0;
+  --alert-border: #E8C9A0;
+  --success-bg: #F0F8F4;
+  --success-border: #A0D4B8;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --transition: 300ms ease;
+}
+
+body {
+  font-family: 'Mulish', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: 'Lora', serif; font-weight: 600; line-height: 1.3; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; margin-bottom: 0.5em; }
+h3 { font-size: 1.15rem; margin-bottom: 0.3em; }
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+  min-height: 100vh;
+}
+
+/* ─── Progress bar ─── */
+.progress-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+  align-items: center;
+}
+.progress-step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.progress-step .step-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+.progress-step .step-bar .fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width var(--transition);
+}
+.progress-step.done .step-bar .fill,
+.progress-step.active .step-bar .fill { width: 100%; }
+.progress-step .step-label {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-top: 0.35rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.progress-step.active .step-label,
+.progress-step.done .step-label { color: var(--text); font-weight: 600; }
+
+/* ─── Screens ─── */
+.screen {
+  display: none;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.screen.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ─── Welcome screen ─── */
+.welcome { text-align: center; padding-top: 3rem; }
+.welcome h1 { margin-bottom: 1rem; }
+.welcome .subtitle {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+.welcome .intro {
+  text-align: left;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.welcome .duration {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+/* ─── Questions ─── */
+.question-block {
+  margin-bottom: 2.5rem;
+}
+.question-block.hidden {
+  display: none;
+}
+.question-text {
+  font-family: 'Lora', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+.question-note {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+/* ─── Option cards ─── */
+.options { display: flex; flex-direction: column; gap: 0.6rem; }
+.option-card {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.option-card:hover { border-color: #ccc; box-shadow: var(--shadow); }
+.option-card.selected {
+  border-color: var(--accent);
+  background: var(--white);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.option-card.multi::before {
+  content: '';
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  margin-right: 0.75rem;
+  vertical-align: middle;
+  transition: all 200ms ease;
+}
+.option-card.multi.selected::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.3 4.3L6 11.6 2.7 8.3a1 1 0 00-1.4 1.4l4 4a1 1 0 001.4 0l8-8a1 1 0 00-1.4-1.4z'/%3E%3C/svg%3E");
+  background-size: 12px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ─── Slider ─── */
+.slider-container {
+  padding: 1.5rem 0;
+}
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 0.75rem;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px; height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 24px; height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* ─── Buttons ─── */
+.btn {
+  display: inline-block;
+  font-family: 'Mulish', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--white);
+}
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 2px solid var(--border);
+}
+.btn-secondary:hover { border-color: #ccc; }
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.nav-buttons .btn { min-width: 120px; text-align: center; }
+
+/* ─── Results ─── */
+.results-section { margin-bottom: 2.5rem; }
+.results-section h2 { margin-bottom: 1rem; }
+
+.profile-title {
+  font-family: 'Lora', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+.profile-archetypes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+.archetype-tag {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.narrative p {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.criteria-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.criteria-list li {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.criteria-list li strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 0.25rem;
+}
+
+.alert-card {
+  background: var(--alert-bg);
+  border: 1px solid var(--alert-border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.alert-card .alert-title {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.results-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+.results-actions .btn { text-align: center; }
+
+/* ─── Print ─── */
+@media print {
+  body { background: white; font-size: 12pt; }
+  .container { padding: 0; max-width: 100%; }
+  .progress-bar, .nav-buttons, .results-actions, .btn { display: none !important; }
+  .screen { display: block !important; opacity: 1 !important; }
+  .screen:not(#results) { display: none !important; }
+  #results { display: block !important; }
+  .alert-card { break-inside: avoid; }
+}
+
+/* ─── Mobile ─── */
+@media (max-width: 480px) {
+  .container { padding: 1.25rem 1rem 3rem; }
+  h1 { font-size: 1.6rem; }
+  .progress-step .step-label { font-size: 0.6rem; }
+  .option-card { padding: 0.85rem 1rem; font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progressBar" style="display:none;">
+    <div class="progress-step" data-step="1">
+      <div class="step-bar"><div class="fill"></div></div>
+      <div class="step-label">Quotidien</div>
+    </div>
+    <div class="progress-step" data-step="2">
+      <div class="step-bar"><div class="fill"></div></div>
+      <div class="step-label">Motivation</div>
+    </div>
+    <div class="progress-step" data-step="3">
+      <div class="step-bar"><div class="fill"></div></div>
+      <div class="step-label">Sens</div>
+    </div>
+    <div class="progress-step" data-step="4">
+      <div class="step-bar"><div class="fill"></div></div>
+      <div class="step-label">Espace</div>
+    </div>
+    <div class="progress-step" data-step="5">
+      <div class="step-bar"><div class="fill"></div></div>
+      <div class="step-label">Environnement</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 0 : Accueil                          -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen active" id="welcome">
+    <div class="welcome">
+      <h1>Mon profil immobilier</h1>
+      <p class="subtitle">Avant de chercher un bien, apprenez à vous connaître.</p>
+      <div class="intro">
+        <p>Ce questionnaire ne va pas vous demander combien de chambres vous voulez ni si vous préférez un appartement ou une maison. Il va vous poser des questions sur votre vie — comment vous travaillez, ce qui vous insupporte, ce qui compte vraiment pour vous au quotidien.</p>
+        <p style="margin-top: 1rem;">À la fin, vous obtiendrez un profil personnalisé qui traduit votre mode de vie en critères immobiliers concrets. Avec des alertes sur les pièges que personne ne vous explique avant qu'il soit trop tard.</p>
+      </div>
+      <p class="duration">~10 minutes</p>
+      <button class="btn btn-primary" onclick="startQuiz()">Commencer</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 1 : Votre quotidien                  -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen1">
+    <h2>Votre quotidien</h2>
+
+    <div class="question-block" data-q="1">
+      <p class="question-text">À quoi ressemble votre journée de travail ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="tt_full">Je travaille à la maison la plupart du temps — j'ai besoin d'un vrai espace dédié</div>
+        <div class="option-card" data-value="tt_partial">Je travaille dehors mais j'ai parfois besoin d'un coin bureau le soir</div>
+        <div class="option-card" data-value="no_tt">Je pars le matin, je rentre le soir — chez moi c'est pour vivre, pas pour bosser</div>
+        <div class="option-card" data-value="tt_double">On est deux à télétravailler sous le même toit</div>
+      </div>
+    </div>
+
+    <div class="question-block hidden" data-q="2" data-condition="q1:tt_full,tt_partial,tt_double">
+      <p class="question-text">Quand vous êtes en visio, votre plus grande angoisse c'est…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="visio_passage">Que quelqu'un passe derrière moi en pyjama</div>
+        <div class="option-card" data-value="visio_bruit">Le bruit de fond (aspirateur, chien, travaux dehors)</div>
+        <div class="option-card" data-value="visio_fond">Que mon fond d'écran virtuel plante et qu'on voie le bazar</div>
+        <div class="option-card" data-value="visio_jamais">Je ne fais jamais de visio</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="3">
+      <p class="question-text">Vous vivez avec…</p>
+      <p class="question-note">Plusieurs réponses possibles</p>
+      <div class="options" data-type="multi">
+        <div class="option-card multi" data-value="partenaire">Mon/ma partenaire</div>
+        <div class="option-card multi" data-value="enfants">Des enfants (ou c'est prévu)</div>
+        <div class="option-card multi" data-value="chats">Un ou des chats</div>
+        <div class="option-card multi" data-value="petit_chien">Un petit chien</div>
+        <div class="option-card multi" data-value="grand_chien">Un grand chien</div>
+        <div class="option-card multi" data-value="seul">Juste moi</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="4">
+      <p class="question-text">Le week-end, votre chez-vous c'est plutôt…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="social">Un endroit où je reçois mes amis, ma famille — j'aime avoir du monde</div>
+        <div class="option-card" data-value="refuge">Mon refuge — j'ai besoin de calme et de me retrouver</div>
+        <div class="option-card" data-value="mix">Un peu des deux selon les semaines</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="5">
+      <p class="question-text">À quelle fréquence des gens dorment chez vous ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="jamais">Jamais. Ma porte, c'est sacré.</div>
+        <div class="option-card" data-value="rare">Une ou deux fois par an, la famille à Noël</div>
+        <div class="option-card" data-value="regulier">Régulièrement — j'ai un canapé-lit en service actif</div>
+        <div class="option-card" data-value="souvent">Souvent, on a toujours du monde à la maison</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="6">
+      <p class="question-text">Quand vous cuisinez un bon repas pour vos proches…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="cuisine_ouverte">J'aime papoter avec eux depuis la cuisine — c'est un moment social</div>
+        <div class="option-card" data-value="cuisine_fermee">Je préfère être dans ma bulle pour cuisiner, et on se retrouve à table</div>
+        <div class="option-card" data-value="cuisine_compact">Je ne cuisine pas vraiment — le micro-ondes et moi, on est très proches</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="7">
+      <p class="question-text">Vous avez un hobby qui prend de la place ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="hobby_none">Non, mes hobbies tiennent dans un téléphone</div>
+        <div class="option-card" data-value="hobby_sport">Oui — sport à la maison (tapis, vélo, poids)</div>
+        <div class="option-card" data-value="hobby_creatif">Oui — je bricole, je crée (couture, peinture, musique…)</div>
+        <div class="option-card" data-value="hobby_bruyant">Oui, et ça fait du bruit (batterie, bricolage, chant)</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="8">
+      <p class="question-text">Votre matin idéal en semaine…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="matin_speed">Lever au dernier moment, douche, café, go</div>
+        <div class="option-card" data-value="matin_lumiere">Un réveil tranquille avec la lumière naturelle qui entre</div>
+        <div class="option-card" data-value="matin_dehors">Un café dehors (terrasse, jardin) avant de commencer</div>
+        <div class="option-card" data-value="matin_sport">Sport ou balade avant toute chose</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="9">
+      <p class="question-text">Après une journée de travail, vous avez besoin de…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="soir_silence">Silence absolu. On ne me parle pas.</div>
+        <div class="option-card" data-value="soir_canape">Un bon film ou une série sur le canapé</div>
+        <div class="option-card" data-value="soir_sortie">Sortir — resto, bar, balade en ville</div>
+        <div class="option-card" data-value="soir_dehors">Du temps dehors (jardin, terrasse, promenade)</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="10">
+      <p class="question-text">Si votre connexion Internet tombe en panne un mardi à 14h…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="internet_vital">C'est la fin du monde. Tout passe par Internet chez moi.</div>
+        <div class="option-card" data-value="internet_travail">C'est la panique — je ne peux pas travailler</div>
+        <div class="option-card" data-value="internet_moyen">Embêtant mais je survis</div>
+        <div class="option-card" data-value="internet_ok">L'occasion de lire un bouquin</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="11">
+      <p class="question-text">Quand vous rentrez chez vous…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="entree_sas">Je pose tout dans l'entrée — manteaux, clés, chaussures, sac. J'ai besoin d'un sas.</div>
+        <div class="option-card" data-value="entree_open">L'open plan me va, je n'ai pas besoin d'une entrée définie</div>
+        <div class="option-card" data-value="entree_soignee">L'entrée c'est la première impression, j'ai besoin que ce soit soigné</div>
+        <div class="option-card" data-value="entree_chien">J'ai un chien. L'entrée c'est la zone de décontamination.</div>
+      </div>
+    </div>
+
+    <div class="question-block hidden" data-q="12" data-condition="q3:!seul">
+      <p class="question-text">On est deux (ou plus) à se préparer en même temps le matin — la guerre de la salle de bain, ça vous parle ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="sdb_enfer">C'est notre quotidien et c'est l'enfer</div>
+        <div class="option-card" data-value="sdb_decale">On gère en décalant les horaires</div>
+        <div class="option-card" data-value="sdb_ok">On n'a pas ce problème</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <span></span>
+      <button class="btn btn-primary" onclick="goToScreen(2)">Continuer</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 2 : Pourquoi vous achetez            -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen2">
+    <h2>Pourquoi vous achetez</h2>
+
+    <div class="question-block" data-q="13">
+      <p class="question-text">Soyez honnête : pourquoi est-ce que vous voulez acheter ?</p>
+      <p class="question-note">Plusieurs réponses possibles</p>
+      <div class="options" data-type="multi">
+        <div class="option-card multi" data-value="loyer">J'en ai marre de payer un loyer pour quelque chose qui ne m'appartient pas</div>
+        <div class="option-card multi" data-value="espace_soi">J'ai envie d'un espace vraiment à moi, que je peux aménager comme je veux</div>
+        <div class="option-card multi" data-value="pression">Tout le monde autour de moi l'a fait, je me dis que c'est le moment</div>
+        <div class="option-card multi" data-value="investissement">C'est un investissement — je veux construire un patrimoine</div>
+        <div class="option-card multi" data-value="renouveau">Je veux changer de vie, repartir sur de nouvelles bases</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="14">
+      <p class="question-text">"À ton âge, tu n'as toujours pas acheté ?" — cette phrase vous fait…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="pression_rien">Rien. Les gens parlent, je vis ma vie.</div>
+        <div class="option-card" data-value="pression_un_peu">Un peu mal, mais je sais que c'est idiot</div>
+        <div class="option-card" data-value="pression_doute">Douter. Peut-être qu'ils ont raison ?</div>
+        <div class="option-card" data-value="pression_motif">C'est exactement pour ça que je suis ici</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="15">
+      <p class="question-text">"Louer c'est jeter de l'argent par les fenêtres" — vous en pensez quoi ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="louer_vrai">C'est vrai, et c'est pour ça que je veux acheter</div>
+        <div class="option-card" data-value="louer_nuance">C'est plus nuancé que ça, mais je préfère être propriétaire</div>
+        <div class="option-card" data-value="louer_desaccord">Pas d'accord, mais j'ai d'autres raisons d'acheter</div>
+        <div class="option-card" data-value="louer_perdu">Honnêtement, je ne sais plus quoi penser</div>
+      </div>
+    </div>
+
+    <div class="question-block hidden" data-q="16" data-condition="q3:partenaire">
+      <p class="question-text">Si vous achetez à deux : avez-vous parlé de ce qui se passe si ça ne marche plus ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="separation_oui">Oui, on en a parlé sérieusement et on a un plan</div>
+        <div class="option-card" data-value="separation_vague">Vaguement, mais on préfère ne pas y penser</div>
+        <div class="option-card" data-value="separation_non">Non. Et la question me met mal à l'aise.</div>
+      </div>
+    </div>
+
+    <div class="question-block hidden" data-q="17" data-condition="q3:partenaire">
+      <p class="question-text">Si vous achetez à deux : est-ce que vous êtes d'accord sur le projet ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="couple_aligne">Complètement alignés, même vision</div>
+        <div class="option-card" data-value="couple_diverge">Globalement d'accord, quelques divergences</div>
+        <div class="option-card" data-value="couple_different">On n'a pas vraiment les mêmes envies, mais on fait avec</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="18">
+      <p class="question-text">En ce moment dans votre vie, c'est plutôt…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="vie_stable">Stable et serein — bonne période</div>
+        <div class="option-card" data-value="vie_changements">Quelques changements en cours mais rien de majeur</div>
+        <div class="option-card" data-value="vie_transition">Transition professionnelle (changement de poste, reconversion)</div>
+        <div class="option-card" data-value="vie_compliquee">Période compliquée (rupture, deuil, burn-out)</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="19">
+      <p class="question-text">Quand vous regardez des annonces immobilières, vous ressentez…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="annonce_excite">De l'excitation pure — j'ai envie de visiter tout de suite</div>
+        <div class="option-card" data-value="annonce_calme">De l'intérêt, mais je garde la tête froide</div>
+        <div class="option-card" data-value="annonce_stress">Du stress — c'est un gros engagement</div>
+        <div class="option-card" data-value="annonce_angoisse">De l'angoisse — et si je faisais une erreur ?</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="20">
+      <p class="question-text">Vous pensez rester dans ce logement combien de temps ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="horizon_long">C'est pour la vie (ou au moins 10+ ans)</div>
+        <div class="option-card" data-value="horizon_moyen">5 à 10 ans, puis on verra</div>
+        <div class="option-card" data-value="horizon_court">3 à 5 ans — c'est un premier pas</div>
+        <div class="option-card" data-value="horizon_aucun">Aucune idée</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="21">
+      <p class="question-text">Votre rapport à l'argent dans ce projet…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="budget_serre">Budget serré, chaque euro compte</div>
+        <div class="option-card" data-value="budget_defini">Budget défini, un peu de marge</div>
+        <div class="option-card" data-value="budget_confort">Budget confortable, je peux me permettre des extras</div>
+        <div class="option-card" data-value="budget_inconnu">Je ne sais pas encore combien je peux emprunter</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="22">
+      <p class="question-text">Pour vous, acheter un logement c'est avant tout…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="achat_investissement">Un investissement financier</div>
+        <div class="option-card" data-value="achat_ancrage">Un projet de vie, un ancrage</div>
+        <div class="option-card" data-value="achat_liberte">La liberté de faire ce que je veux chez moi</div>
+        <div class="option-card" data-value="achat_securite">La sécurité — savoir que personne ne peut me mettre dehors</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goToScreen(1)">Retour</button>
+      <button class="btn btn-primary" onclick="goToScreen(3)">Continuer</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 3 : Vos sens et vos limites          -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen3">
+    <h2>Vos sens et vos limites</h2>
+
+    <div class="question-block" data-q="23">
+      <p class="question-text">Si votre voisin met la musique un samedi soir…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="bruit_extreme">Ça me rend physiquement mal — le bruit me percute</div>
+        <div class="option-card" data-value="bruit_agace">Ça m'agace, je ne pourrais pas vivre avec ça régulièrement</div>
+        <div class="option-card" data-value="bruit_depend">Ça dépend de l'heure, mais globalement je gère</div>
+        <div class="option-card" data-value="bruit_ok">Franchement, ça ne me dérange pas plus que ça</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="24">
+      <p class="question-text">Le bruit de pas au-dessus de votre tête — quelqu'un qui marche, des enfants qui courent, une chaise qu'on traîne…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="impact_cauchemar">C'est un cauchemar. Inacceptable.</div>
+        <div class="option-card" data-value="impact_crispe">Ça me crispe assez vite</div>
+        <div class="option-card" data-value="impact_gere">Ça m'arrive de l'entendre, ça ne me gêne pas</div>
+        <div class="option-card" data-value="impact_rien">Je ne le remarque même pas</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="25">
+      <p class="question-text">Entendre les conversations ou la télé de vos voisins à travers le mur…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="aerien_intolerable">Intolérable. J'ai besoin de silence chez moi.</div>
+        <div class="option-card" data-value="aerien_derange">Ça me dérange beaucoup, surtout le soir</div>
+        <div class="option-card" data-value="aerien_vit">Ça m'agace un peu mais je vis avec</div>
+        <div class="option-card" data-value="aerien_ok">Ça ne m'est jamais arrivé, ou je m'en fiche</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="26">
+      <p class="question-text">Le camion poubelle à 6h du matin, la cour d'école à 8h, les travaux du voisin le samedi…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="ext_bouchons">Je porte des bouchons d'oreilles pour dormir, ça vous donne une idée</div>
+        <div class="option-card" data-value="ext_reveille">Ça me réveille et ça m'énerve</div>
+        <div class="option-card" data-value="ext_lourd">Moyen, mais j'ai le sommeil lourd</div>
+        <div class="option-card" data-value="ext_fiche">Ça fait partie de la vie, je m'en fiche</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="27">
+      <p class="question-text">Les voisins qui font un barbecue et rigolent fort un samedi soir d'été…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="bbq_demenager">Je vais devoir déménager si ça arrive régulièrement</div>
+        <div class="option-card" data-value="bbq_gache">Ça me gâche la soirée</div>
+        <div class="option-card" data-value="bbq_tard">Ça me gêne un peu si c'est tard</div>
+        <div class="option-card" data-value="bbq_cool">Cool, tant mieux pour eux</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="28">
+      <p class="question-text">L'odeur de cigarette ou de barbecue du voisin qui rentre chez vous par la fenêtre…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="odeur_physique">Les odeurs m'affectent physiquement (nausées, maux de tête)</div>
+        <div class="option-card" data-value="odeur_dingue">Ça me rend dingue, surtout l'été quand je veux aérer</div>
+        <div class="option-card" data-value="odeur_fenetre">C'est gênant mais je ferme la fenêtre et c'est réglé</div>
+        <div class="option-card" data-value="odeur_ok">Ça ne me dérange pas</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="29">
+      <p class="question-text">Est-ce que ça vous dérangerait que vos voisins entendent VOS bruits ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="mes_bruits_enorme">Énormément — j'ai besoin de me sentir libre chez moi sans gêne</div>
+        <div class="option-card" data-value="mes_bruits_malaise">Oui, ça me mettrait mal à l'aise</div>
+        <div class="option-card" data-value="mes_bruits_horaires">Un peu, je fais attention aux horaires</div>
+        <div class="option-card" data-value="mes_bruits_non">Non, je vis ma vie</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="30">
+      <p class="question-text">En plein été, chez vous…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="chaleur_enfer">C'est un enfer — je ne supporte pas d'avoir chaud chez moi</div>
+        <div class="option-card" data-value="chaleur_rafraichir">Je supporte bien mais j'aime pouvoir rafraîchir un peu</div>
+        <div class="option-card" data-value="chaleur_aime">J'aime la chaleur, fenêtre ouverte, pas de clim</div>
+        <div class="option-card" data-value="chaleur_sante">J'ai un problème de santé lié à la chaleur</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="31">
+      <p class="question-text">En hiver, chez vous…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="froid_frileux">Je suis frileux, j'ai besoin de 22°C minimum</div>
+        <div class="option-card" data-value="froid_normal">19-20°C ça me va, avec un pull</div>
+        <div class="option-card" data-value="froid_budget">Le chauffage est un budget que je surveille de près</div>
+        <div class="option-card" data-value="froid_fiche">Je m'en fiche tant que c'est correct</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="32">
+      <p class="question-text">Quand quelque chose de moche est dans votre champ de vision (façade décrépite, poubelles, bâtiment imposant)…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="visuel_humeur">Ça affecte mon humeur au quotidien — j'ai besoin de beau autour de moi</div>
+        <div class="option-card" data-value="visuel_pese">Ça me pèse, l'environnement visuel compte pour moi</div>
+        <div class="option-card" data-value="visuel_agace">Ça m'agace un peu mais j'oublie vite</div>
+        <div class="option-card" data-value="visuel_rien">Je ne le remarque même pas</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="33">
+      <p class="question-text">La lumière naturelle chez vous…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="lumiere_matin">J'aime me réveiller avec le soleil du matin dans la chambre</div>
+        <div class="option-card" data-value="lumiere_soir">Je préfère la lumière chaude de fin de journée dans la pièce de vie</div>
+        <div class="option-card" data-value="lumiere_max">Je veux du soleil toute la journée — la luminosité c'est vital pour moi</div>
+        <div class="option-card" data-value="lumiere_ok">Tant qu'il ne fait pas sombre, ça me va</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="34">
+      <p class="question-text">Se préparer le matin dans une salle de bain sans fenêtre, éclairée au néon…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="sdb_fenetre_deprime">Ça me déprime rien que d'y penser</div>
+        <div class="option-card" data-value="sdb_fenetre_bof">C'est pas l'idéal mais je m'en remets</div>
+        <div class="option-card" data-value="sdb_fenetre_ok">Je n'y fais pas attention</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goToScreen(2)">Retour</button>
+      <button class="btn btn-primary" onclick="goToScreen(4)">Continuer</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 4 : Votre rapport à l'espace         -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen4">
+    <h2>Votre rapport à l'espace</h2>
+
+    <div class="question-block" data-q="35">
+      <p class="question-text">Les bruits de pas au-dessus, les voix dans la cage d'escalier, la porte du voisin qui claque à 23h…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="collectif_non">Je ne pourrais pas — j'ai besoin de ne pas entendre les autres vivre</div>
+        <div class="option-card" data-value="collectif_longue">Ça me pèserait à la longue mais je peux faire avec</div>
+        <div class="option-card" data-value="collectif_ok">Ça fait partie de la vie en communauté, ça ne me pose pas de problème</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="36">
+      <p class="question-text">Devoir voter en AG de copro, négocier avec des voisins sur le budget chauffage, attendre l'accord de tout le monde pour repeindre le hall…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="copro_enfer">L'enfer — je veux être maître chez moi sans rendre de comptes</div>
+        <div class="option-card" data-value="copro_gere">C'est pas mon truc mais je gère si c'est bien organisé</div>
+        <div class="option-card" data-value="copro_ok">Ça ne me dérange pas, c'est le jeu de la vie en collectif</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="37">
+      <p class="question-text">On vous dit que vous ne pouvez pas installer de climatisation, pas peindre votre balcon, pas mettre de store sans accord de la copro…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="reglement_normal">Normal, c'est la vie en collectif</div>
+        <div class="option-card" data-value="reglement_genant">Gênant mais gérable</div>
+        <div class="option-card" data-value="reglement_dingue">Ça me rendrait dingue</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="38">
+      <p class="question-text">Si vous pouviez choisir vos voisins, ce serait…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="voisins_invisibles">Invisibles. Je ne veux pas savoir qu'ils existent.</div>
+        <div class="option-card" data-value="voisins_distants">Polis et distants. Un bonjour et c'est tout.</div>
+        <div class="option-card" data-value="voisins_sympas">Sympas et disponibles, une petite communauté</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="39">
+      <p class="question-text">Monter 4 étages à pied avec les courses, un chien, ou une poussette…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="etages_sportif">Pas de problème, je suis sportif</div>
+        <div class="option-card" data-value="etages_20ans">Acceptable maintenant, mais dans 20 ans ?</div>
+        <div class="option-card" data-value="etages_non">C'est non. Il me faut un ascenseur ou un accès direct.</div>
+        <div class="option-card" data-value="etages_mobilite">J'ai un problème de mobilité, c'est un critère médical</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="40">
+      <p class="question-text">Un projet de travaux (choisir les matériaux, suivre des artisans, vivre dans la poussière)…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="travaux_reve">Ça me fait rêver — j'adore transformer un espace</div>
+        <div class="option-card" data-value="travaux_leger">Pourquoi pas du léger, mais pas un chantier</div>
+        <div class="option-card" data-value="travaux_non">Juste non — je veux poser mes meubles et vivre</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="41">
+      <p class="question-text">Les vieilles pierres, les moulures, le parquet qui craque…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="ancien_vibre">Ça me fait vibrer, j'adore le cachet</div>
+        <div class="option-card" data-value="ancien_moderne">C'est joli mais je préfère le confort moderne</div>
+        <div class="option-card" data-value="ancien_angoisse">Ça m'angoisse — je pense aux risques cachés derrière le charme</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="42">
+      <p class="question-text">Face à l'imprévu dans un projet…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="imprevu_paralyse">Ça me paralyse. J'ai besoin que tout soit carré.</div>
+        <div class="option-card" data-value="imprevu_stress">Ça me stresse mais je gère</div>
+        <div class="option-card" data-value="imprevu_adapte">Ça fait partie du jeu, je m'adapte</div>
+        <div class="option-card" data-value="imprevu_defi">J'aime les défis, les surprises ne me font pas peur</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="43">
+      <p class="question-text">Votre budget pour le projet…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="budget_bien_seul">Le bien et c'est tout — pas de marge pour des travaux</div>
+        <div class="option-card" data-value="budget_rafraichir">Le bien + un petit budget rafraîchissement</div>
+        <div class="option-card" data-value="budget_reno">Le bien + un vrai budget rénovation</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="44">
+      <p class="question-text">Dans 20 ans, vous vous imaginez…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="futur_meme">Au même endroit, dans la même maison</div>
+        <div class="option-card" data-value="futur_ailleurs">Ailleurs — la vie change, le logement aussi</div>
+        <div class="option-card" data-value="futur_sait_pas">Je ne me projette pas aussi loin</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="45">
+      <p class="question-text">Vous aimez profiter de votre terrasse l'été. En hiver, les arbres perdent leurs feuilles et votre voisin d'en face voit directement chez vous…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="visavis_inacceptable">Inacceptable — je n'avais même pas pensé à ça</div>
+        <div class="option-card" data-value="visavis_genant">C'est gênant mais c'est seulement quelques mois</div>
+        <div class="option-card" data-value="visavis_ok">Ça ne me dérange pas</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goToScreen(3)">Retour</button>
+      <button class="btn btn-primary" onclick="goToScreen(5)">Continuer</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 5 : Votre environnement              -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="screen5">
+    <h2>Votre environnement</h2>
+
+    <div class="question-block" data-q="46">
+      <p class="question-text">Un bon samedi matin, ça commence par…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="samedi_terrasse">Un café sur ma terrasse ou dans mon jardin, en silence</div>
+        <div class="option-card" data-value="samedi_coffee">Un café dans un coffee shop du quartier</div>
+        <div class="option-card" data-value="samedi_ecran">Un café devant mon écran (séries, réseaux, jeux)</div>
+        <div class="option-card" data-value="samedi_sport">Pas de café, je suis déjà dehors à courir/marcher</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="47">
+      <p class="question-text">Pour vos courses du quotidien…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="courses_pied">J'aime y aller à pied ou à vélo, dans des petits commerces</div>
+        <div class="option-card" data-value="courses_voiture">Je prends la voiture une fois par semaine, ça ne me dérange pas</div>
+        <div class="option-card" data-value="courses_online">Je commande en ligne — le moins de déplacements possible</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="48">
+      <p class="question-text">Imaginez votre dimanche idéal…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="dimanche_ville">Brunch en terrasse, balade en ville, un peu d'animation autour de moi</div>
+        <div class="option-card" data-value="dimanche_nature">Randonnée, nature, silence — loin de tout</div>
+        <div class="option-card" data-value="dimanche_jardin">Jardin, barbecue tranquille, le calme mais pas l'isolement</div>
+        <div class="option-card" data-value="dimanche_chez_moi">Rester chez moi. Que personne ne me dérange.</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="49">
+      <p class="question-text">Si vous deviez choisir…</p>
+      <div class="slider-container">
+        <div class="slider-labels">
+          <span>De l'espace, du vert, du silence</span>
+          <span>Tout à portée de main</span>
+        </div>
+        <input type="range" id="slider49" min="0" max="100" value="50">
+      </div>
+    </div>
+
+    <div class="question-block" data-q="50">
+      <p class="question-text">Au quotidien, 20 minutes de voiture pour le médecin, les courses, l'école…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="trajet_ok">Convient parfaitement</div>
+        <div class="option-card" data-value="trajet_limite">C'est la limite — au-delà c'est trop</div>
+        <div class="option-card" data-value="trajet_trop">C'est déjà trop — j'ai besoin de tout avoir proche</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="51">
+      <p class="question-text">Cinémas, restos, bars, expos, concerts — à quel point c'est important pour vous ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="culture_indispensable">Indispensable, c'est une partie de ma vie</div>
+        <div class="option-card" data-value="culture_agreable">Agréable à avoir, mais pas déterminant</div>
+        <div class="option-card" data-value="culture_passe">Je m'en passe très bien</div>
+        <div class="option-card" data-value="culture_loin">Je préfère que ce soit loin — moins de monde, moins de bruit</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="52">
+      <p class="question-text">Avez-vous besoin d'un accès rapide à des professionnels de santé ?</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="sante_non">Pas spécialement, je suis en bonne santé</div>
+        <div class="option-card" data-value="sante_regulier">Oui, suivi régulier (médecin, spécialiste)</div>
+        <div class="option-card" data-value="sante_enfants">Oui, pour mes enfants (pédiatre, urgences)</div>
+        <div class="option-card" data-value="sante_critique">Oui, c'est un critère non négociable (maladie chronique, handicap)</div>
+      </div>
+    </div>
+
+    <div class="question-block hidden" data-q="53" data-condition="q3:petit_chien,grand_chien">
+      <p class="question-text">Les balades quotidiennes avec votre chien, c'est…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="chien_parc">Un parc ou un espace vert accessible à pied suffit</div>
+        <div class="option-card" data-value="chien_jardin">Un jardin clôturé, c'est un minimum</div>
+        <div class="option-card" data-value="chien_grands_espaces">De grands espaces — forêts, chemins, campagne</div>
+      </div>
+    </div>
+
+    <div class="question-block hidden" data-q="54" data-condition="q3:enfants">
+      <p class="question-text">La proximité de l'école…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="ecole_pied">À pied, c'est idéal</div>
+        <div class="option-card" data-value="ecole_voiture">En voiture, 10-15 min, c'est acceptable</div>
+        <div class="option-card" data-value="ecole_maison">On fera l'école à la maison</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="55">
+      <p class="question-text">Votre rapport à la voiture…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="voiture_aucune">Pas de voiture, je fais tout sans</div>
+        <div class="option-card" data-value="voiture_une">Une voiture, indispensable au quotidien</div>
+        <div class="option-card" data-value="voiture_deux">Deux voitures dans le foyer</div>
+        <div class="option-card" data-value="voiture_reduire">Une voiture mais j'aimerais pouvoir m'en passer</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="56">
+      <p class="question-text">Ce que vous voyez depuis vos fenêtres chaque jour…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="vue_fondamental">C'est fondamental — j'ai besoin de verdure ou d'une vue dégagée</div>
+        <div class="option-card" data-value="vue_bonus">C'est un bonus appréciable</div>
+        <div class="option-card" data-value="vue_fiche">Je n'y fais pas attention</div>
+      </div>
+    </div>
+
+    <div class="question-block" data-q="57">
+      <p class="question-text">L'idée de tondre la pelouse un dimanche…</p>
+      <div class="options" data-type="single">
+        <div class="option-card" data-value="jardin_bonheur">Le bonheur. J'adore jardiner, entretenir, planter.</div>
+        <div class="option-card" data-value="jardin_corvee">Corvée acceptable pour avoir un extérieur</div>
+        <div class="option-card" data-value="jardin_angoisse">Ma pire angoisse. Je veux un extérieur sans entretien (terrasse, balcon).</div>
+        <div class="option-card" data-value="jardin_pas_besoin">Pas besoin d'extérieur privé, un parc à côté me suffit</div>
+      </div>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" onclick="goToScreen(4)">Retour</button>
+      <button class="btn btn-primary" onclick="showResults()">Voir mon profil</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SCREEN 6 : Résultats                        -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="screen" id="results">
+    <div class="results-section">
+      <p class="profile-title" id="resultTitle"></p>
+      <div class="profile-archetypes" id="resultArchetypes"></div>
+    </div>
+
+    <div class="results-section">
+      <h2>Votre mode de vie, traduit en critères</h2>
+      <div class="narrative" id="resultNarrative"></div>
+    </div>
+
+    <div class="results-section">
+      <h2>Ce que ça veut dire concrètement</h2>
+      <ul class="criteria-list" id="resultCriteria"></ul>
+    </div>
+
+    <div class="results-section" id="alertsSection" style="display:none;">
+      <h2>Points de vigilance</h2>
+      <div id="resultAlerts"></div>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn btn-primary" onclick="window.print()">Sauvegarder en PDF</button>
+      <a href="https://theinuhouse.com/premier-achat-immobilier-questions-avant-de-chercher/" class="btn btn-secondary" target="_blank">Lire le guide complet</a>
+      <button class="btn btn-secondary" onclick="restart()">Recommencer</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+const answers = {};
+let currentScreen = 0;
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function startQuiz() {
+  goToScreen(1);
+}
+
+function goToScreen(n) {
+  // Save slider value for Q49 if leaving screen 5
+  if (currentScreen === 5) {
+    const slider = document.getElementById('slider49');
+    if (slider) answers['q49'] = parseInt(slider.value);
+  }
+
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+  });
+
+  const target = n === 0 ? 'welcome' : (n === 6 ? 'results' : 'screen' + n);
+  const el = document.getElementById(target);
+
+  // Small delay for fade effect
+  setTimeout(() => {
+    el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 50);
+
+  currentScreen = n;
+  updateProgress(n);
+  updateConditionalQuestions();
+
+  // Restore slider value
+  if (n === 5 && answers['q49'] !== undefined) {
+    document.getElementById('slider49').value = answers['q49'];
+  }
+
+  // Show/hide progress bar
+  document.getElementById('progressBar').style.display = (n >= 1 && n <= 5) ? 'flex' : 'none';
+}
+
+function updateProgress(n) {
+  document.querySelectorAll('.progress-step').forEach(step => {
+    const s = parseInt(step.dataset.step);
+    step.classList.remove('active', 'done');
+    if (s < n) step.classList.add('done');
+    if (s === n) step.classList.add('active');
+  });
+}
+
+// ══════════════════════════════════════════════
+// OPTION SELECTION
+// ══════════════════════════════════════════════
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.option-card');
+  if (!card) return;
+
+  const options = card.closest('.options');
+  const type = options.dataset.type;
+  const qBlock = card.closest('.question-block');
+  const qNum = qBlock.dataset.q;
+  const value = card.dataset.value;
+
+  if (type === 'single') {
+    options.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    answers['q' + qNum] = value;
+  } else {
+    // Multi-select
+    // "seul" is exclusive in Q3
+    if (qNum === '3') {
+      if (value === 'seul') {
+        options.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+      } else {
+        options.querySelector('[data-value="seul"]')?.classList.remove('selected');
+        card.classList.toggle('selected');
+      }
+    } else {
+      card.classList.toggle('selected');
+    }
+
+    const selected = [];
+    options.querySelectorAll('.option-card.selected').forEach(c => selected.push(c.dataset.value));
+    answers['q' + qNum] = selected;
+  }
+
+  updateConditionalQuestions();
+});
+
+// ══════════════════════════════════════════════
+// CONDITIONAL QUESTIONS
+// ══════════════════════════════════════════════
+function updateConditionalQuestions() {
+  document.querySelectorAll('.question-block[data-condition]').forEach(block => {
+    const cond = block.dataset.condition;
+    const visible = evaluateCondition(cond);
+    block.classList.toggle('hidden', !visible);
+  });
+}
+
+function evaluateCondition(cond) {
+  // Format: "q1:val1,val2" or "q3:!seul"
+  const [qRef, valsPart] = cond.split(':');
+  const qKey = qRef;
+  const answer = answers[qKey];
+
+  if (!answer) return false;
+
+  if (valsPart.startsWith('!')) {
+    // Negation — for multi-select: the excluded value must NOT be selected
+    const excluded = valsPart.substring(1);
+    if (Array.isArray(answer)) {
+      return !answer.includes(excluded);
+    }
+    return answer !== excluded;
+  }
+
+  const vals = valsPart.split(',');
+  if (Array.isArray(answer)) {
+    return vals.some(v => answer.includes(v));
+  }
+  return vals.includes(answer);
+}
+
+// ══════════════════════════════════════════════
+// RESULTS GENERATION
+// ══════════════════════════════════════════════
+function showResults() {
+  // Save slider
+  const slider = document.getElementById('slider49');
+  if (slider) answers['q49'] = parseInt(slider.value);
+
+  generateProfile();
+  goToScreen(6);
+  document.getElementById('progressBar').style.display = 'none';
+}
+
+function val(q) { return answers['q' + q]; }
+function isMulti(q, v) {
+  const a = answers['q' + q];
+  return Array.isArray(a) && a.includes(v);
+}
+function has(q) { return answers['q' + q] !== undefined; }
+
+function generateProfile() {
+  // ── Scoring ──
+  const scores = {
+    cocooneur: 0,    // calme, intimité, silence
+    social: 0,       // reçoit, sorties, urbain
+    teletravailleur: 0, // TT, fibre, bureau
+    sensible: 0,     // bruit, odeurs, visuel
+    pragmatique: 0,  // pas de préférence forte
+    batisseur: 0,    // travaux, reno, créatif
+    familial: 0      // enfants, animaux, espace
+  };
+
+  // ── Q1 : Travail ──
+  if (val(1) === 'tt_full') { scores.teletravailleur += 3; }
+  if (val(1) === 'tt_double') { scores.teletravailleur += 4; }
+  if (val(1) === 'tt_partial') { scores.teletravailleur += 1; }
+
+  // ── Q2 : Visio ──
+  if (val(2) === 'visio_bruit') { scores.sensible += 1; scores.teletravailleur += 1; }
+  if (val(2) === 'visio_passage') { scores.teletravailleur += 1; }
+
+  // ── Q3 : Foyer ──
+  if (isMulti(3, 'enfants')) { scores.familial += 3; }
+  if (isMulti(3, 'grand_chien')) { scores.familial += 2; }
+  if (isMulti(3, 'petit_chien')) { scores.familial += 1; }
+  if (isMulti(3, 'chats')) { scores.familial += 1; }
+  if (isMulti(3, 'seul')) { scores.cocooneur += 1; }
+
+  // ── Q4 : Week-end ──
+  if (val(4) === 'social') { scores.social += 3; }
+  if (val(4) === 'refuge') { scores.cocooneur += 3; }
+  if (val(4) === 'mix') { scores.social += 1; scores.cocooneur += 1; }
+
+  // ── Q5 : Invités ──
+  if (val(5) === 'souvent' || val(5) === 'regulier') { scores.social += 2; }
+  if (val(5) === 'jamais') { scores.cocooneur += 2; }
+
+  // ── Q7 : Hobby ──
+  if (val(7) === 'hobby_bruyant') { scores.batisseur += 2; scores.sensible += 1; }
+  if (val(7) === 'hobby_creatif') { scores.batisseur += 1; }
+  if (val(7) === 'hobby_none') { scores.pragmatique += 1; }
+
+  // ── Q8 : Matin ──
+  if (val(8) === 'matin_dehors') { scores.cocooneur += 1; }
+
+  // ── Q9 : Soir ──
+  if (val(9) === 'soir_silence') { scores.cocooneur += 2; scores.sensible += 1; }
+  if (val(9) === 'soir_sortie') { scores.social += 2; }
+  if (val(9) === 'soir_dehors') { scores.cocooneur += 1; }
+
+  // ── Q10 : Internet ──
+  if (val(10) === 'internet_vital' || val(10) === 'internet_travail') { scores.teletravailleur += 1; }
+
+  // ── Q23-29 : Bruit ──
+  const bruitQs = [23, 24, 25, 26, 27, 28, 29];
+  let bruitScore = 0;
+  bruitQs.forEach(q => {
+    const v = val(q);
+    if (!v) return;
+    // First option = most sensitive
+    const opts = document.querySelector(`[data-q="${q}"] .options`);
+    if (!opts) return;
+    const cards = opts.querySelectorAll('.option-card');
+    const idx = Array.from(cards).findIndex(c => c.dataset.value === v);
+    bruitScore += (3 - idx); // 3 for first, 0 for last
+  });
+  if (bruitScore >= 15) { scores.sensible += 5; scores.cocooneur += 3; }
+  else if (bruitScore >= 10) { scores.sensible += 3; scores.cocooneur += 1; }
+  else if (bruitScore >= 5) { scores.sensible += 1; }
+  else { scores.pragmatique += 2; }
+
+  // ── Q30 : Chaleur ──
+  if (val(30) === 'chaleur_enfer' || val(30) === 'chaleur_sante') { scores.sensible += 2; }
+
+  // ── Q32 : Visuel ──
+  if (val(32) === 'visuel_humeur') { scores.sensible += 2; }
+  if (val(32) === 'visuel_pese') { scores.sensible += 1; }
+
+  // ── Q35-38 : Collectif ──
+  if (val(35) === 'collectif_non') { scores.cocooneur += 3; }
+  if (val(36) === 'copro_enfer') { scores.cocooneur += 2; }
+  if (val(37) === 'reglement_dingue') { scores.cocooneur += 2; }
+  if (val(38) === 'voisins_invisibles') { scores.cocooneur += 2; }
+  if (val(38) === 'voisins_sympas') { scores.social += 1; }
+
+  // ── Q40-43 : Travaux ──
+  if (val(40) === 'travaux_reve') { scores.batisseur += 3; }
+  if (val(40) === 'travaux_non') { scores.pragmatique += 2; }
+  if (val(41) === 'ancien_vibre') { scores.batisseur += 2; }
+  if (val(41) === 'ancien_angoisse') { scores.pragmatique += 1; }
+  if (val(42) === 'imprevu_defi') { scores.batisseur += 1; }
+  if (val(42) === 'imprevu_paralyse') { scores.pragmatique += 2; }
+  if (val(43) === 'budget_reno') { scores.batisseur += 2; }
+
+  // ── Q46-51 : Environnement ──
+  if (val(46) === 'samedi_coffee') { scores.social += 1; }
+  if (val(46) === 'samedi_terrasse') { scores.cocooneur += 1; }
+  if (val(48) === 'dimanche_ville') { scores.social += 2; }
+  if (val(48) === 'dimanche_nature') { scores.cocooneur += 2; }
+  if (val(48) === 'dimanche_chez_moi') { scores.cocooneur += 2; }
+  if (val(51) === 'culture_indispensable') { scores.social += 2; }
+  if (val(51) === 'culture_loin') { scores.cocooneur += 1; }
+
+  // ── Determine dominant archetypes ──
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const archetypes = [];
+  const threshold = Math.max(3, sorted[0][1] * 0.4);
+  sorted.forEach(([name, score]) => {
+    if (score >= threshold && archetypes.length < 3) {
+      archetypes.push(name);
+    }
+  });
+
+  // ── Build results ──
+  const archetypeLabels = {
+    cocooneur: 'Le Cocooneur',
+    social: 'Le Social',
+    teletravailleur: 'Le Télétravailleur',
+    sensible: 'Le Sensible',
+    pragmatique: 'Le Pragmatique',
+    batisseur: 'Le Bâtisseur',
+    familial: 'Le Familial'
+  };
+
+  const archetypeTitles = {
+    cocooneur: 'Vous avez besoin d\'un cocon au calme',
+    social: 'Vous êtes fait pour la vie urbaine avec votre espace à vous',
+    teletravailleur: 'Votre logement est aussi votre bureau — il doit être à la hauteur',
+    sensible: 'Votre bien-être passe par un environnement maîtrisé',
+    pragmatique: 'Vous cherchez l\'efficacité sans complication',
+    batisseur: 'Vous avez besoin d\'un projet à transformer',
+    familial: 'Votre logement doit accueillir toute la tribu'
+  };
+
+  // Title
+  const mainArchetype = archetypes[0] || 'pragmatique';
+  document.getElementById('resultTitle').textContent = archetypeTitles[mainArchetype];
+
+  // Archetype tags
+  const tagsEl = document.getElementById('resultArchetypes');
+  tagsEl.innerHTML = '';
+  archetypes.forEach(a => {
+    const tag = document.createElement('span');
+    tag.className = 'archetype-tag';
+    tag.textContent = archetypeLabels[a];
+    tagsEl.appendChild(tag);
+  });
+
+  // ── Narrative ──
+  const narrativeParts = [];
+
+  // Bruit narrative
+  if (scores.sensible >= 5) {
+    narrativeParts.push('Vous avez indiqué que le bruit des autres vous percute et que la vie en collectif vous pèse. Concrètement, ça signifie qu\'un appartement en étage intermédiaire avec des voisins au-dessus et en dessous serait un risque pour votre bien-être quotidien. Une maison ou un dernier étage serait bien plus adapté à votre fonctionnement.');
+  } else if (scores.sensible >= 3) {
+    narrativeParts.push('Vous êtes sensible à votre environnement — le bruit, les odeurs, l\'esthétique comptent pour vous. Ce n\'est pas du caprice, c\'est votre quotidien. Il faut en tenir compte dans votre recherche, sinon vous le regretterez.');
+  }
+
+  // TT narrative
+  if (scores.teletravailleur >= 3) {
+    if (val(1) === 'tt_double') {
+      narrativeParts.push('Vous êtes deux à travailler de chez vous. C\'est un mode de vie qui demande des espaces séparés, une bonne connexion, et une isolation qui permette à chacun de bosser sans déranger l\'autre. Ce n\'est pas un détail — c\'est un critère structurant.');
+    } else {
+      narrativeParts.push('Votre logement est aussi votre lieu de travail. Ça change tout : vous y passez la journée, vous avez besoin de concentration, de fibre, et d\'un espace qui ne soit pas le coin de la table de la cuisine.');
+    }
+  }
+
+  // Social narrative
+  if (scores.social >= 4) {
+    narrativeParts.push('Vous aimez recevoir, sortir, avoir de la vie autour de vous. Votre logement doit être un lieu où l\'on se retrouve — avec une pièce de vie généreuse et un quartier qui vit.');
+  }
+
+  // Cocooneur narrative
+  if (scores.cocooneur >= 5 && scores.sensible < 5) {
+    narrativeParts.push('Votre chez-vous, c\'est votre refuge. Vous avez besoin de calme, d\'intimité, et de savoir que personne ne viendra perturber votre bulle. C\'est un besoin fondamental, pas un luxe.');
+  }
+
+  // Batisseur narrative
+  if (scores.batisseur >= 4) {
+    narrativeParts.push('Vous avez envie de transformer, de créer, de mettre votre patte sur un espace. Un bien clé en main ne vous fera pas vibrer — vous avez besoin d\'un projet. Mais attention : les travaux c\'est aussi des imprévus, du stress et du budget qui dérape.');
+  }
+
+  // Familial narrative
+  if (scores.familial >= 3) {
+    const parts = [];
+    if (isMulti(3, 'enfants')) parts.push('des enfants');
+    if (isMulti(3, 'grand_chien') || isMulti(3, 'petit_chien')) parts.push('un chien');
+    if (isMulti(3, 'chats')) parts.push('un chat');
+    if (parts.length > 0) {
+      narrativeParts.push('Avec ' + parts.join(', ') + ' dans l\'équation, votre logement doit être pensé pour tout le monde. Ça veut dire de l\'espace, de la sécurité, et un environnement adapté à la vie de famille au sens large.');
+    }
+  }
+
+  // Default narrative
+  if (narrativeParts.length === 0) {
+    narrativeParts.push('Vos réponses montrent un profil équilibré, sans besoin extrême dans une direction particulière. C\'est une bonne nouvelle : votre recherche peut être large. Mais attention à ne pas confondre flexibilité et absence de critères — le risque c\'est de finir par accepter un bien qui ne correspond à rien de précis.');
+  }
+
+  document.getElementById('resultNarrative').innerHTML = narrativeParts.map(p => '<p>' + p + '</p>').join('');
+
+  // ── Criteria ──
+  const criteria = [];
+
+  // Bureau
+  if (val(1) === 'tt_full' || val(1) === 'tt_double') {
+    criteria.push({ reason: 'Vous travaillez de chez vous', deduction: 'Un bureau fermé est indispensable — pas un coin dans le salon.' });
+  } else if (val(1) === 'tt_partial') {
+    criteria.push({ reason: 'Vous travaillez parfois de chez vous', deduction: 'Un coin bureau dédié, même petit, serait un vrai plus.' });
+  }
+  if (val(1) === 'tt_double') {
+    criteria.push({ reason: 'Vous êtes deux en télétravail', deduction: 'Deux espaces de travail séparés, ou au minimum une pièce fermée en plus.' });
+  }
+
+  // Internet
+  if (val(10) === 'internet_vital' || val(10) === 'internet_travail') {
+    criteria.push({ reason: 'Internet est vital pour vous', deduction: 'Vérifiez l\'éligibilité fibre de chaque bien — c\'est un critère éliminatoire.' });
+  }
+
+  // Cuisine
+  if (val(6) === 'cuisine_ouverte') {
+    criteria.push({ reason: 'Vous aimez cuisiner en discutant', deduction: 'Cuisine ouverte sur le salon, ou au minimum un large passe-plat.' });
+  } else if (val(6) === 'cuisine_fermee') {
+    criteria.push({ reason: 'Vous préférez cuisiner dans votre bulle', deduction: 'Cuisine fermée ou semi-fermée — les odeurs et le bazar restent cachés.' });
+  }
+
+  // Chambre d'amis
+  if (val(5) === 'souvent' || val(5) === 'regulier') {
+    criteria.push({ reason: 'Vous recevez régulièrement des gens qui dorment chez vous', deduction: 'Prévoyez une vraie chambre d\'amis, ou au minimum un espace convertible.' });
+  }
+
+  // Hobby
+  if (val(7) === 'hobby_bruyant') {
+    criteria.push({ reason: 'Votre hobby fait du bruit', deduction: 'Maison ou pièce très bien isolée. En appartement, ce sera un sujet avec les voisins.' });
+  } else if (val(7) === 'hobby_sport' || val(7) === 'hobby_creatif') {
+    criteria.push({ reason: 'Vous avez un hobby qui prend de la place', deduction: 'Prévoyez une pièce en plus ou un garage aménageable.' });
+  }
+
+  // Lumière
+  if (val(33) === 'lumiere_matin') {
+    criteria.push({ reason: 'La lumière du matin vous est essentielle', deduction: 'Privilégiez une chambre orientée est.' });
+  } else if (val(33) === 'lumiere_soir') {
+    criteria.push({ reason: 'Vous préférez la lumière de fin de journée', deduction: 'Pièce de vie orientée ouest pour profiter du soleil en rentrant.' });
+  } else if (val(33) === 'lumiere_max') {
+    criteria.push({ reason: 'La luminosité est vitale pour vous', deduction: 'Exposition sud, double ou triple exposition, étage élevé si appartement.' });
+  }
+
+  // SDB fenêtre
+  if (val(34) === 'sdb_fenetre_deprime') {
+    criteria.push({ reason: 'Une salle de bain sans fenêtre vous déprime', deduction: 'Salle de bain avec fenêtre — c\'est un critère de visite.' });
+  }
+
+  // Entrée
+  if (val(11) === 'entree_sas' || val(11) === 'entree_chien') {
+    criteria.push({ reason: 'Vous avez besoin d\'un sas d\'entrée', deduction: 'Entrée séparée avec rangements — évitez les plans où la porte donne directement sur le salon.' });
+  }
+
+  // Double SDB
+  if (val(12) === 'sdb_enfer') {
+    criteria.push({ reason: 'La guerre de la salle de bain, c\'est votre quotidien', deduction: 'Double vasque minimum, idéalement une deuxième salle d\'eau.' });
+  }
+
+  // Maison vs appart
+  if (scores.cocooneur >= 5 || (val(35) === 'collectif_non' && val(36) === 'copro_enfer')) {
+    criteria.push({ reason: 'Vous ne supportez pas la vie collective', deduction: 'Maison individuelle fortement recommandée. Si budget contraint : dernier étage ou rez-de-jardin sans voisin au-dessus.' });
+  } else if (val(35) === 'collectif_longue') {
+    criteria.push({ reason: 'La vie collective vous pèserait à la longue', deduction: 'Dernier étage, petit immeuble, ou maison si le budget le permet.' });
+  }
+
+  // Accessibilité
+  if (val(39) === 'etages_non' || val(39) === 'etages_mobilite') {
+    criteria.push({ reason: 'Les étages sans ascenseur, c\'est non', deduction: 'Rez-de-chaussée, ascenseur obligatoire, ou plain-pied.' });
+  } else if (val(39) === 'etages_20ans') {
+    criteria.push({ reason: 'Vous pensez à l\'accessibilité sur le long terme', deduction: 'Si c\'est pour longtemps, pensez plain-pied ou ascenseur. Ce qui est acceptable à 35 ans ne l\'est plus à 55.' });
+  }
+
+  // Travaux
+  if (val(40) === 'travaux_reve' && val(43) === 'budget_reno') {
+    criteria.push({ reason: 'Vous aimez les travaux et avez le budget', deduction: 'Ancien à rénover, maison à transformer, ou construction (CCMI) — c\'est votre terrain de jeu.' });
+  } else if (val(40) === 'travaux_non') {
+    criteria.push({ reason: 'Les travaux, c\'est non', deduction: 'Ciblez du récent (moins de 10 ans) ou du neuf. Vous y gagnerez en sérénité.' });
+  }
+
+  // Extérieur
+  if (val(57) === 'jardin_bonheur') {
+    criteria.push({ reason: 'Vous adorez jardiner', deduction: 'Jardin privatif — c\'est un critère de bonheur, pas un luxe.' });
+  } else if (val(57) === 'jardin_angoisse') {
+    criteria.push({ reason: 'L\'entretien d\'un jardin vous angoisse', deduction: 'Terrasse ou balcon — l\'extérieur sans la corvée.' });
+  } else if (val(57) === 'jardin_pas_besoin') {
+    criteria.push({ reason: 'Un parc à côté vous suffit', deduction: 'Pas besoin de payer pour un extérieur privé — investissez ailleurs.' });
+  }
+
+  // Voiture / parking
+  if (val(55) === 'voiture_deux') {
+    criteria.push({ reason: 'Deux voitures dans le foyer', deduction: 'Deux places de parking — en copro, une seule place est souvent incluse et la deuxième coûte cher.' });
+  } else if (val(55) === 'voiture_aucune') {
+    criteria.push({ reason: 'Pas de voiture', deduction: 'Transports en commun à proximité immédiate — vérifiez les horaires, pas juste la distance.' });
+  }
+
+  // Environnement
+  const sliderVal = answers['q49'] || 50;
+  if (sliderVal <= 25) {
+    criteria.push({ reason: 'Vous avez choisi l\'espace et le calme', deduction: 'Périurbain ou campagne — mais vérifiez les temps de trajet en heure de pointe, pas un dimanche matin.' });
+  } else if (sliderVal >= 75) {
+    criteria.push({ reason: 'Vous voulez tout à portée de main', deduction: 'Centre-ville ou premier cercle urbain — acceptez que le mètre carré sera plus cher.' });
+  }
+
+  // Vue
+  if (val(56) === 'vue_fondamental') {
+    criteria.push({ reason: 'La vue depuis vos fenêtres est fondamentale', deduction: 'Visitez le bien à différentes heures et vérifiez ce qui se trouve en face — y compris les projets de construction.' });
+  }
+
+  // Proximité commerces
+  if (val(50) === 'trajet_trop') {
+    criteria.push({ reason: '20 minutes de voiture, c\'est déjà trop pour vous', deduction: 'Restez en zone urbaine ou périurbaine bien desservie. La maison à la campagne, c\'est joli le week-end — au quotidien, c\'est une autre histoire.' });
+  }
+
+  // Culture
+  if (val(51) === 'culture_indispensable') {
+    criteria.push({ reason: 'La vie culturelle est indispensable pour vous', deduction: 'Centre-ville ou banlieue très bien connectée. Si vous partez en périphérie, vous finirez par ne plus y aller.' });
+  }
+
+  // Chien
+  if (isMulti(3, 'grand_chien') && val(53) === 'chien_grands_espaces') {
+    criteria.push({ reason: 'Un grand chien qui a besoin de grands espaces', deduction: 'Maison avec jardin ou accès direct à la nature. En appartement en ville, votre quotidien sera compliqué.' });
+  } else if ((isMulti(3, 'petit_chien') || isMulti(3, 'grand_chien')) && val(53) === 'chien_jardin') {
+    criteria.push({ reason: 'Votre chien a besoin d\'un jardin', deduction: 'Jardin clôturé — pensez aussi à l\'accès direct depuis la maison.' });
+  }
+
+  // Enfants / école
+  if (isMulti(3, 'enfants') && val(54) === 'ecole_pied') {
+    criteria.push({ reason: 'Vous voulez l\'école à pied', deduction: 'Vérifiez la carte scolaire AVANT de signer — ce n\'est pas toujours l\'école la plus proche.' });
+  }
+
+  // Santé
+  if (val(52) === 'sante_critique') {
+    criteria.push({ reason: 'L\'accès aux soins est non négociable', deduction: 'Vérifiez la densité médicale de la zone (site Ameli). En zone sous-dotée, trouver un généraliste peut prendre des mois.' });
+  }
+
+  // Render criteria
+  const criteriaEl = document.getElementById('resultCriteria');
+  criteriaEl.innerHTML = '';
+  criteria.forEach(c => {
+    const li = document.createElement('li');
+    li.innerHTML = '<strong>' + c.reason + '</strong>' + c.deduction;
+    criteriaEl.appendChild(li);
+  });
+
+  // ── Alerts ──
+  const alerts = [];
+
+  // Bruit + ancien
+  if (scores.sensible >= 3 && (val(41) === 'ancien_vibre')) {
+    alerts.push({
+      title: 'Sensible au bruit + attiré par l\'ancien',
+      text: 'Les bâtiments d\'avant 1996 n\'ont aucune norme d\'isolation phonique. Vous entendrez tout. Le cachet des vieilles pierres ne compense pas les nuits blanches à cause du voisin du dessus.'
+    });
+  }
+
+  // Dernier étage + chaleur
+  if ((val(24) === 'impact_cauchemar' || val(35) === 'collectif_non') && (val(30) === 'chaleur_enfer' || val(30) === 'chaleur_sante')) {
+    alerts.push({
+      title: 'Dernier étage et chaleur',
+      text: 'Un dernier étage peut devenir une fournaise en été, surtout avec une exposition sud ou ouest. Et beaucoup de copropriétés interdisent l\'installation de climatisation extérieure.'
+    });
+  }
+
+  // Couple + pas discuté séparation
+  if (isMulti(3, 'partenaire') && (val(16) === 'separation_vague' || val(16) === 'separation_non')) {
+    alerts.push({
+      title: 'Achat à deux : la question qui fâche',
+      text: '53% des Français considèrent l\'achat immobilier plus engageant que le mariage. En cas de séparation, un bien en commun c\'est une vente à perte dans l\'urgence, des mois de procédure, et du stress financier. Parlez-en maintenant — pas devant le notaire.'
+    });
+  }
+
+  // Couple pas aligné
+  if (val(17) === 'couple_different') {
+    alerts.push({
+      title: 'Visions différentes du projet',
+      text: 'Acheter un bien sur un compromis mal digéré, c\'est s\'assurer que l\'un des deux sera malheureux. Prenez le temps de clarifier vos envies respectives avant de visiter quoi que ce soit.'
+    });
+  }
+
+  // Période instable
+  if (val(18) === 'vie_compliquee') {
+    alerts.push({
+      title: 'Période compliquée',
+      text: 'Acheter pendant une période de transition, c\'est risqué. Beaucoup de gens sur les forums racontent avoir acheté par besoin de fuite ou de renouveau plutôt que par vrai projet immobilier. Et un mauvais achat rajoute du stress au lieu d\'en enlever.'
+    });
+  }
+
+  // Pression sociale forte
+  if (val(14) === 'pression_motif' || (isMulti(13, 'pression') && val(14) === 'pression_doute')) {
+    alerts.push({
+      title: 'Pression sociale',
+      text: 'Si votre principale motivation d\'achat est que "tout le monde l\'a fait", posez-vous la question : est-ce que vous achetez pour vous, ou pour correspondre à ce qu\'on attend de vous ? Il n\'y a pas de mauvaise réponse, mais il faut être honnête avec soi-même.'
+    });
+  }
+
+  // Excitation pure
+  if (val(19) === 'annonce_excite' && (val(15) === 'louer_vrai' || val(15) === 'louer_perdu')) {
+    alerts.push({
+      title: 'Attention à l\'impulsivité',
+      text: 'L\'excitation devant les annonces combinée à des certitudes non questionnées, c\'est le cocktail de l\'achat regretté. Prenez le temps. Visitez beaucoup. Et ne signez jamais sous le coup de l\'émotion.'
+    });
+  }
+
+  // Horizon court
+  if (val(20) === 'horizon_court') {
+    alerts.push({
+      title: 'Revente avant 5 ans',
+      text: 'Entre les frais de notaire (~8% dans l\'ancien), les frais d\'agence (~5%), et les intérêts d\'emprunt, une revente avant 5-7 ans se fait presque toujours à perte. Si vous n\'êtes pas sûr de rester, la location reste parfois la meilleure option financière.'
+    });
+  }
+
+  // Budget serré + pas de marge
+  if (val(21) === 'budget_serre' && val(43) === 'budget_bien_seul') {
+    alerts.push({
+      title: 'Budget sans marge',
+      text: 'Le prix d\'achat n\'est que le début. Taxe foncière, charges de copro, entretien courant, assurance habitation, petits travaux imprévus — prévoyez toujours une marge, même modeste. Un achat au centime près, c\'est un achat qui peut mal tourner.'
+    });
+  }
+
+  // Travaux non + ancien
+  if (val(40) === 'travaux_non' && val(41) === 'ancien_vibre') {
+    alerts.push({
+      title: 'Pas de travaux mais attiré par l\'ancien',
+      text: 'L\'ancien a du charme, mais il a aussi des surprises : plomberie fatiguée, électricité pas aux normes, isolation inexistante. Si vous ne voulez pas de travaux, le récent (5-10 ans) vous apportera plus de sérénité avec un bon niveau de confort.'
+    });
+  }
+
+  // Campagne + besoin services
+  if (val(50) === 'trajet_trop' && sliderVal <= 35) {
+    alerts.push({
+      title: 'Le paradoxe campagne + services',
+      text: 'Vous voulez de l\'espace et du vert, mais vous avez aussi besoin que tout soit proche. Le rêve de la maison à la campagne se heurte souvent à la réalité de l\'isolement : 20 minutes pour le pain, 40 pour le médecin, des heures perdues en voiture chaque semaine.'
+    });
+  }
+
+  // Vis-à-vis saisonnier
+  if (val(45) === 'visavis_inacceptable') {
+    alerts.push({
+      title: 'Le vis-à-vis saisonnier',
+      text: 'Les arbres cachent tout en été. En hiver, les feuilles tombent et votre terrasse devient un aquarium. Si vous visitez un bien entre mai et octobre, allez voir à quoi ressemble la vue en décembre — ou demandez des photos.'
+    });
+  }
+
+  // Grand chien + collectif
+  if (isMulti(3, 'grand_chien') && val(35) !== 'collectif_non' && scores.cocooneur < 5) {
+    alerts.push({
+      title: 'Grand chien en vie collective',
+      text: 'Un grand chien en appartement, c\'est gérable, mais ça demande des balades fréquentes et des espaces verts très proches. Vérifiez aussi le règlement de copropriété — certains interdisent les chiens de grande taille.'
+    });
+  }
+
+  // Budget inconnu
+  if (val(21) === 'budget_inconnu') {
+    alerts.push({
+      title: 'Budget pas encore défini',
+      text: 'Avant de visiter quoi que ce soit, allez voir votre banque ou un courtier pour connaître votre capacité d\'emprunt réelle. Visiter sans budget, c\'est tomber amoureux de biens qu\'on ne peut pas s\'offrir — et finir frustré ou par acheter dans l\'urgence.'
+    });
+  }
+
+  // Frileux + budget serré
+  if (val(31) === 'froid_frileux' && (val(21) === 'budget_serre' || val(31) === 'froid_budget')) {
+    alerts.push({
+      title: 'Frileux et budget serré',
+      text: 'Un DPE de E, F ou G, c\'est des factures de chauffage qui explosent. Vérifiez le DPE de chaque bien — et n\'oubliez pas qu\'un logement classé F ou G sera bientôt interdit à la location (si vous pensez revente/investissement).'
+    });
+  }
+
+  // Render alerts
+  const alertsSection = document.getElementById('alertsSection');
+  const alertsEl = document.getElementById('resultAlerts');
+  alertsEl.innerHTML = '';
+
+  if (alerts.length > 0) {
+    alertsSection.style.display = 'block';
+    alerts.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'alert-card';
+      div.innerHTML = '<div class="alert-title">' + a.title + '</div><p>' + a.text + '</p>';
+      alertsEl.appendChild(div);
+    });
+  } else {
+    alertsSection.style.display = 'none';
+  }
+}
+
+function restart() {
+  Object.keys(answers).forEach(k => delete answers[k]);
+  document.querySelectorAll('.option-card.selected').forEach(c => c.classList.remove('selected'));
+  document.getElementById('slider49').value = 50;
+  goToScreen(0);
+}
+</script>
+
+</body>
+</html>
